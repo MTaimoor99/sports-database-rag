@@ -20,6 +20,12 @@ SYSTEM_PROMPT = """You are a sports assistant with access to live and historical
 When a user asks about scores, fixtures, or team performance, use the available tools to fetch real data.
 Never make up scores or statistics."""
 
+def should_continue(state:AgentState):
+    last_message = state['messages'][-1]
+    if last_message.tool_calls:
+        return "tools"
+    return END
+
 def agent_node(state:AgentState) -> AgentState:
     messages = [SystemMessage(content=SYSTEM_PROMPT)] + state['messages']
     response = llm.invoke(messages)
@@ -27,3 +33,19 @@ def agent_node(state:AgentState) -> AgentState:
 
 def tool_node():
     pass
+
+#Building the graph
+graph_builder = StateGraph(AgentState)
+
+graph_builder.add_node("agent",agent_node)
+graph_builder.add_node("tools",tool_node)
+
+graph_builder.set_entry_point("agent")
+
+graph_builder.add_conditional_edges(
+    "agent",
+    should_continue,
+)
+
+graph_builder.add_edge("tools","agent")
+graph = graph_builder.compile()
