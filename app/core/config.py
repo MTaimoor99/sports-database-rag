@@ -9,5 +9,5 @@ class Settings(BaseSettings):
 
     api_sports_key: str
     google_api_key: str
-
+    api_sports_base_url: str = "https://v3.football.api-sports.io"
 settings = Settings()

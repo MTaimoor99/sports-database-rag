@@ -8,6 +8,13 @@ from langchain_core.messages import SystemMessage
 from app.core.config import settings
 from langgraph.prebuilt import ToolNode
 
+from app.tools.sports_tools import (
+    get_live_scores,
+    get_fixtures_by_date,
+    get_team_recent_results,
+    search_team,
+)
+
 class AgentState(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
 
@@ -15,6 +22,13 @@ llm = ChatGoogleGenerativeAI(
     model = "gemini-3.1-flash-lite-preview",
     google_api_key = settings.google_api_key,
 )
+tools = [
+    get_live_scores,
+    get_fixtures_by_date,
+    get_team_recent_results,
+    search_team,
+]
+llm_with_tools = llm.bind_tools(tools)
 
 SYSTEM_PROMPT = """You are a sports assistant with access to live and historical sports data.
 When a user asks about scores, fixtures, or team performance, use the available tools to fetch real data.
@@ -28,11 +42,10 @@ def should_continue(state:AgentState):
 
 def agent_node(state:AgentState) -> AgentState:
     messages = [SystemMessage(content=SYSTEM_PROMPT)] + state['messages']
-    response = llm.invoke(messages)
+    response = llm_with_tools.invoke(messages)
     return {"messages":response}
 
-def tool_node():
-    pass
+tool_node = ToolNode(tools)
 
 #Building the graph
 graph_builder = StateGraph(AgentState)
