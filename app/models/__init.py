@@ -1,1 +1,1 @@
-from .query import QueryRequest,QueryResponse
+from .request_response.query import QueryRequest,QueryResponse
