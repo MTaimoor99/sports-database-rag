@@ -19,7 +19,7 @@ class AgentState(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
 
 llm = ChatGoogleGenerativeAI(
-    model = "gemini-3.1-flash-lite-preview",
+    model = "gemini-3.1-flash-lite",
     google_api_key = settings.google_api_key,
 )
 tools = [
