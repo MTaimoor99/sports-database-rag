@@ -20,7 +20,8 @@ class FootballService:
             params = params
         )
         response.raise_for_status()
-        return response.json()    
+        json_response = response.json()
+        return json_response    
 
 
     async def get_fixtures_by_date(self,date:str)->dict:
