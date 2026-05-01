@@ -11,7 +11,8 @@ app = FastAPI(title="Sports Database RAG")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000",
+                   "https://sports-database-rag-frontend-10keigsv0-mtaimoor99s-projects.vercel.app/"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
