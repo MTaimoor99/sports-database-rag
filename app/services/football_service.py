@@ -19,11 +19,9 @@ class FootballService:
 
         redis_start = time.time()
         cached = await self.redis.get(cache_key)
-        print(f"Redis lookup took: {(time.time() - redis_start) * 1000:.2f}ms")
         if cached:
             return json.loads(cached)
 
-        start = time.time()
         params = {"live": "all"}
         if league_id:
             params["league"] = league_id
@@ -35,8 +33,6 @@ class FootballService:
         )
         response.raise_for_status()
         json_response = response.json()
-        end = time.time()
-        print(f"API call took: {(end - start) * 1000:.2f}ms")
 
         await self.redis.setex(cache_key, LIVE_SCORES_TTL, json.dumps(json_response))
         return json_response

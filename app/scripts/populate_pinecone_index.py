@@ -29,7 +29,6 @@ async def fetch_league_fixtures(client: httpx.AsyncClient, league_id: int) -> li
     )
     response.raise_for_status()
     data = response.json()
-    print(f"League {league_id}: fetched {len(data['response'])} fixtures")
     return data["response"]
 
 #Function for concurrent fetching of league fixtures.
@@ -72,7 +71,6 @@ async def populate_db():
         # Skip if already exists in Pinecone
         existing = index.fetch(ids=[fixture_id])
         if existing.vectors:
-            print(f"Skipping {fixture_id}, already exists")
             continue
 
         text = fixture_to_text(fixture)
@@ -88,7 +86,6 @@ async def populate_db():
     for i in range(0, len(vectors), batch_size):
         batch = vectors[i:i + batch_size]
         index.upsert(vectors=batch)
-        print(f"Upserted batch {i // batch_size + 1} of {len(vectors) // batch_size + 1}")
 
 
 if __name__=="__main__":
