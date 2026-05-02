@@ -2,9 +2,14 @@ from langchain_core.tools import tool
 from app.services.football_service import FootballService
 import httpx
 import asyncio
-from app.scripts.populate_pinecone_index import embeddings,index
+from redis.asyncio import Redis
+from app.core.config import settings
+from app.scripts.populate_pinecone_index import embeddings, index
 
-football_service = FootballService(client=httpx.AsyncClient())
+football_service = FootballService(
+    client=httpx.AsyncClient(),
+    redis=Redis.from_url(settings.redis_url)
+)
 
 #ReAct Tool
 @tool
