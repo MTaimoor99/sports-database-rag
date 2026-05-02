@@ -7,12 +7,14 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage
 from app.core.config import settings
 from langgraph.prebuilt import ToolNode
+from app.utils import get_current_season
 
 from app.tools.sports_tools import (
     get_live_scores,
     get_fixtures_by_date,
     get_team_recent_results,
     search_team,
+    search_historical_data
 )
 
 class AgentState(TypedDict):
@@ -27,10 +29,11 @@ tools = [
     get_fixtures_by_date,
     get_team_recent_results,
     search_team,
+    search_historical_data,
 ]
 llm_with_tools = llm.bind_tools(tools)
 
-SYSTEM_PROMPT = """You are a sports assistant with access to live and historical sports data.
+SYSTEM_PROMPT = """You are a sports assistant with access to live and historical sports data. The current season is {get_current_season}
 When a user asks about scores, fixtures, or team performance, use the available tools to fetch real data.
 Never make up scores or statistics."""
 
