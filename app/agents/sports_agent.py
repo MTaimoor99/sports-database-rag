@@ -14,6 +14,7 @@ from app.tools.sports_tools import (
     get_fixtures_by_date,
     get_team_recent_results,
     search_team,
+    search_historical_data
 )
 
 class AgentState(TypedDict):
@@ -28,6 +29,7 @@ tools = [
     get_fixtures_by_date,
     get_team_recent_results,
     search_team,
+    search_historical_data,
 ]
 llm_with_tools = llm.bind_tools(tools)
 

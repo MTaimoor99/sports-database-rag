@@ -2,9 +2,11 @@ from langchain_core.tools import tool
 from app.services.football_service import FootballService
 import httpx
 import asyncio
+from app.scripts.populate_pinecone_index import embeddings,index
 
 football_service = FootballService(client=httpx.AsyncClient())
 
+#ReAct Tool
 @tool
 def get_live_scores(league_id:int | None = None) -> dict:
     """Fetch currently live football scores
@@ -12,6 +14,26 @@ def get_live_scores(league_id:int | None = None) -> dict:
     league_id is optional — pass it to filter by a specific league.
     """
     return asyncio.run(football_service.get_live_scores(league_id))
+
+#RAG tool
+@tool
+def search_historical_data(query: str) -> dict:
+    """
+    Search historical football data for the current season.
+    Use this when the user asks about past match results, team performance,
+    or historical statistics from the current season.
+    """
+    query_vector = embeddings.embed_query(query)
+    
+    results = index.query(
+        vector=query_vector,
+        top_k=5,
+        include_metadata=True
+    )
+    
+    matches = [match["metadata"]["text"] for match in results["matches"]]
+    
+    return {"results": matches}
 
 @tool
 def get_fixtures_by_date(date: str) -> dict:
