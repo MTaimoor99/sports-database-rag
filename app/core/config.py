@@ -12,4 +12,5 @@ class Settings(BaseSettings):
     pinecone_api_key: str
     pinecone_index_name: str
     api_sports_base_url: str = "https://v3.football.api-sports.io"
+    redis_url: str = "redis://localhost:6379"
 settings = Settings()
