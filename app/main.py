@@ -18,7 +18,3 @@ app.add_middleware(
 )
 
 app.include_router(query_router, prefix="/api/v1")
-
-@app.get("/health")
-async def health():
-    return {"status": "ok"}
